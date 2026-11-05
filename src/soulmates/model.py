@@ -12,6 +12,7 @@ def age_band(age):
 
 def build_model(df, search_ages=(18, 60)):
     band = age_band(df["age"].to_numpy())
+    weekend = df["weekend"].to_numpy().astype(float)
     search = np.arange(search_ages[0], search_ages[1] + 1)
     years_per_band = np.bincount(age_band(search), minlength=N_BANDS)  # search years that fall in each band
     with pm.Model(coords={"band": np.arange(N_BANDS)}) as model:
@@ -19,11 +20,16 @@ def build_model(df, search_ages=(18, 60)):
         sigma_band = pm.HalfNormal("sigma_band", 0.5)
         z = pm.Normal("z", 0, 1, dims="band")  # non centred form
         band_mean = pm.Deterministic("band_mean", pt.exp(mu_pop + sigma_band * z), dims="band")
+        beta_weekend = pm.Normal("beta_weekend", 0, 0.5)  # log of the weekend multiplier, centred on no effect
         alpha = pm.HalfNormal("alpha", 5)
         pm.NegativeBinomial(
-            "new_contacts", mu=band_mean[band], alpha=alpha, observed=df["new_contacts"].to_numpy()
+            "new_contacts",
+            mu=band_mean[band] * pt.exp(beta_weekend * weekend),
+            alpha=alpha,
+            observed=df["new_contacts"].to_numpy(),
         )
-        lifetime_new = pm.Deterministic("lifetime_new", 365 * pt.sum(years_per_band * band_mean))
+        week = 5 / 7 + 2 / 7 * pt.exp(beta_weekend)  # average day of a week with 5 weekdays and 2 weekend days
+        lifetime_new = pm.Deterministic("lifetime_new", 365 * week * pt.sum(years_per_band * band_mean))
         p_eye = pm.Beta("p_eye", 2, 2)  # guess, no data informs it
         pm.Deterministic("eye_contacts", lifetime_new * p_eye)
         pm.Beta("p_recog", 2, 2)  # guess, no data informs it
