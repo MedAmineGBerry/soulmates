@@ -1,4 +1,4 @@
-"""Download the three POLYMOD files from Zenodo into data/raw and check their MD5 checksums."""
+"""Download the four POLYMOD files from Zenodo into data/raw and check their MD5 checksums."""
 import hashlib
 import pathlib
 import urllib.request
@@ -8,6 +8,7 @@ FILES = {
     "2008_Mossong_POLYMOD_participant_common.csv": "ac784c281a71e15c7e64eaf2d6365709",
     "2008_Mossong_POLYMOD_contact_common.csv": "52baf32033bf780786fae6604043ec00",
     "2008_Mossong_POLYMOD_sday.csv": "148c5fc86ca10d385e3d047014e14a09",
+    "2008_Mossong_POLYMOD_hh_common.csv": "d7fb1359ad84dba8cce4c444063940aa",
 }
 RAW = pathlib.Path(__file__).resolve().parent.parent / "data" / "raw"
 

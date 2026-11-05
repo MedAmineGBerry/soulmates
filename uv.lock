@@ -1268,6 +1268,23 @@ wheels = [
 ]
 
 [[package]]
+name = "preliz"
+version = "0.28.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "arviz-stats" },
+    { name = "matplotlib" },
+    { name = "numba" },
+    { name = "numpy" },
+    { name = "pytensor-distributions" },
+    { name = "scipy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b6/c7/e5d865cc78b7c692599f8f5c7b1d8429c9a2e1616e41d79655ddbf699066/preliz-0.28.0.tar.gz", hash = "sha256:cca19395c2d647613a85ada114c5e3cc63b801dedcb49654cf97de7694a9cc37", size = 460974, upload-time = "2026-09-07T06:49:50.19Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1b/1e/28d8ed4d6babee6b368029c0a62ab923eb61468ca9b78d2b6189f551d2b4/preliz-0.28.0-py3-none-any.whl", hash = "sha256:c3bd9edec7b5b527255d1931ee6ee1c7d93cada2e2671fb2dc6a2fda146a41de", size = 527720, upload-time = "2026-09-07T06:49:48.806Z" },
+]
+
+[[package]]
 name = "prompt-toolkit"
 version = "3.0.53"
 source = { registry = "https://pypi.org/simple" }
@@ -1400,6 +1417,19 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/be/ba/bcddffe9629cd23495a4abc2e4671801acb15e27bbf558aaec761ab5392a/pytensor-3.3.7-cp314-cp314t-musllinux_1_2_x86_64.whl", hash = "sha256:bc024893bfb26087929da18fd50285acf4376d62ce25a7d5ae4694023ba53cdc", size = 2548963, upload-time = "2026-11-02T00:57:59.273Z" },
     { url = "https://files.pythonhosted.org/packages/ff/fd/829e0103a02e3b4559c3519fd2fbeae1e529d5c9eef6f05ec97502049e4a/pytensor-3.3.7-cp314-cp314t-win_amd64.whl", hash = "sha256:154f585d6c5be63e5941e174504bd9bcf2e7ab65f15b367c4c589b31fbcff491", size = 2003367, upload-time = "2026-11-02T00:58:01.037Z" },
     { url = "https://files.pythonhosted.org/packages/27/7d/91fd12bc5d29fbe193b9c945745814adf594d84e4cd3c2c9867ee5599f15/pytensor-3.3.7-py2.py3-none-any.whl", hash = "sha256:7b4831043a4262fd5fb89a4acb3eabd7292fcd1d93a4b37d8bc9a271cd664cbe", size = 1680580, upload-time = "2026-11-02T00:58:02.899Z" },
+]
+
+[[package]]
+name = "pytensor-distributions"
+version = "0.3.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "pytensor" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ee/5d/e82c6407a2e76f579f0f2c98efdb25a7511d5b195f1b9ae5228b60c9f228/pytensor_distributions-0.3.3.tar.gz", hash = "sha256:14ff39aef4285c6c6a1cd5cfbe815bd68def3a99b2e643b60ebbc748f8cc591a", size = 45730, upload-time = "2026-10-06T15:49:57.941Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c9/06/c0d7bf91f8e2391be8dd925514ab9a853c21b279a0cb5682eabe21d67295/pytensor_distributions-0.3.3-py3-none-any.whl", hash = "sha256:d67ab816314afba472c7b9abe928d64d34e90852aa3153bf015e5c1903b1cc8c", size = 73184, upload-time = "2026-10-06T15:49:56.618Z" },
 ]
 
 [[package]]
@@ -1663,6 +1693,7 @@ dependencies = [
     { name = "arviz" },
     { name = "matplotlib" },
     { name = "pandas" },
+    { name = "preliz" },
     { name = "pymc" },
     { name = "pytensor" },
 ]
@@ -1679,6 +1710,7 @@ requires-dist = [
     { name = "arviz", specifier = ">=1.3" },
     { name = "matplotlib", specifier = ">=3.11" },
     { name = "pandas", specifier = ">=3.1" },
+    { name = "preliz", specifier = ">=0.28" },
     { name = "pymc", specifier = ">=6.4" },
     { name = "pytensor", specifier = ">=3.3.7" },
 ]

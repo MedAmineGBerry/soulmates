@@ -8,7 +8,11 @@ def load_polymod(raw_dir, max_drop=0.05):
     def read(name):
         return pd.read_csv(f"{raw_dir}/{PREFIX}{name}.csv", low_memory=False)
 
-    part = read("participant_common").merge(read("sday")[["part_id", "dayofweek"]], on="part_id", how="left")
+    part = (
+        read("participant_common")
+        .merge(read("sday")[["part_id", "dayofweek"]], on="part_id", how="left")
+        .merge(read("hh_common")[["hh_id", "country"]], on="hh_id", how="left")
+    )
     cont = read("contact_common")
     no_age, no_day = part["part_age"].isna(), part["dayofweek"].isna()
     rules = [("no part_age", no_age), ("no dayofweek", no_day), ("no frequency_multi", cont["frequency_multi"].isna())]
@@ -23,4 +27,5 @@ def load_polymod(raw_dir, max_drop=0.05):
         "age": part["part_age"].astype(int).to_numpy(),
         "new_contacts": part["part_id"].map(new).fillna(0).astype(int).to_numpy(),
         "weekend": part["dayofweek"].isin([0, 6]).to_numpy(),  # 0 is Sunday, 6 is Saturday
+        "country": part["country"].to_numpy(),
     })

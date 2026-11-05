@@ -1,5 +1,6 @@
 """PyMC model for new contacts per day, and the chance of finding your soul mate."""
 import numpy as np
+import preliz as pz
 import pymc as pm
 import pytensor.tensor as pt
 
@@ -10,7 +11,7 @@ def age_band(age):
     return np.minimum(np.asarray(age) // 5, N_BANDS - 1)
 
 
-def build_model(df, search_ages=(18, 60)):
+def build_model(df, search_ages=(18, 60), recog_bounds=(0.1, 0.6), recog_mass=0.9):
     band = age_band(df["age"].to_numpy())
     weekend = df["weekend"].to_numpy().astype(float)
     search = np.arange(search_ages[0], search_ages[1] + 1)
@@ -29,14 +30,16 @@ def build_model(df, search_ages=(18, 60)):
             observed=df["new_contacts"].to_numpy(),
         )
         week = 5 / 7 + 2 / 7 * pt.exp(beta_weekend)  # average day of a week with 5 weekdays and 2 weekend days
-        lifetime_new = pm.Deterministic("lifetime_new", 365 * week * pt.sum(years_per_band * band_mean))
-        p_eye = pm.Beta("p_eye", 2, 2)  # guess, no data informs it
-        pm.Deterministic("eye_contacts", lifetime_new * p_eye)
-        pm.Beta("p_recog", 2, 2)  # guess, no data informs it
+        pm.Deterministic("lifetime_new", 365 * week * pt.sum(years_per_band * band_mean))
+        # The speaker's guess, "I am recog_mass sure p_recog lies between the bounds", turned into the
+        # flattest Beta prior that meets it (maximum entropy), so the answer is unique
+        recog = pz.Beta()
+        pz.maxent(recog, lower=recog_bounds[0], upper=recog_bounds[1], mass=recog_mass, plot=False)
+        pm.Beta("p_recog", alpha=float(recog.alpha), beta=float(recog.beta))
     return model
 
 
 def p_find(idata, pool_size):
     post = idata.posterior
-    # 1 − (1 − p_recog / M) ^ eye_contacts, written so a tiny probability does not round to zero
-    return -np.expm1(post["eye_contacts"] * np.log1p(-post["p_recog"] / pool_size))
+    # 1 − (1 − p_recog / M) ^ lifetime_new, written so a tiny probability does not round to zero
+    return -np.expm1(post["lifetime_new"] * np.log1p(-post["p_recog"] / pool_size))

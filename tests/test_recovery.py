@@ -1,5 +1,6 @@
 import arviz as az
 import numpy as np
+import pandas as pd
 import pymc as pm
 import pytest
 
@@ -30,6 +31,15 @@ def test_recovers_true_values():
 
 
 def test_p_find_by_hand():
-    # 2 eye contacts, sure recognition, pool of 4: 1 − (3/4)² = 7/16
-    idata = az.from_dict({"posterior": {"eye_contacts": np.array([[2.0]]), "p_recog": np.array([[1.0]])}})
+    # 2 new people, sure recognition, pool of 4: 1 − (3/4)² = 7/16
+    idata = az.from_dict({"posterior": {"lifetime_new": np.array([[2.0]]), "p_recog": np.array([[1.0]])}})
     assert p_find(idata, pool_size=4).item() == pytest.approx(7 / 16)
+
+
+def test_recog_prior_matches_the_guess():
+    # The guess "90% sure p_recog lies between 0.1 and 0.6" must put 90% of the prior draws in that range.
+    # With 4000 draws, chance alone moves the share by about 0.005.
+    df = pd.DataFrame({"age": [30], "new_contacts": [1], "weekend": [False]})
+    with build_model(df, recog_bounds=(0.1, 0.6), recog_mass=0.9):
+        p_recog = pm.sample_prior_predictive(draws=4000, random_seed=3).prior["p_recog"].values
+    assert ((p_recog > 0.1) & (p_recog < 0.6)).mean() == pytest.approx(0.90, abs=0.02)
