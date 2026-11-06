@@ -11,6 +11,14 @@ def age_band(age):
     return np.minimum(np.asarray(age) // 5, N_BANDS - 1)
 
 
+def recog_prior(bounds=(0.1, 0.6), mass=0.9):
+    # The speaker's guess, "I am mass sure p_recog lies between the bounds", turned into the
+    # flattest Beta prior that meets it (maximum entropy), so the answer is unique
+    recog = pz.Beta()
+    pz.maxent(recog, lower=bounds[0], upper=bounds[1], mass=mass, plot=False)
+    return float(recog.alpha), float(recog.beta)
+
+
 def build_model(df, search_ages=(18, 60), recog_bounds=(0.1, 0.6), recog_mass=0.9):
     band = age_band(df["age"].to_numpy())
     weekend = df["weekend"].to_numpy().astype(float)
@@ -31,11 +39,8 @@ def build_model(df, search_ages=(18, 60), recog_bounds=(0.1, 0.6), recog_mass=0.
         )
         week = 5 / 7 + 2 / 7 * pt.exp(beta_weekend)  # average day of a week with 5 weekdays and 2 weekend days
         pm.Deterministic("lifetime_new", 365 * week * pt.sum(years_per_band * band_mean))
-        # The speaker's guess, "I am recog_mass sure p_recog lies between the bounds", turned into the
-        # flattest Beta prior that meets it (maximum entropy), so the answer is unique
-        recog = pz.Beta()
-        pz.maxent(recog, lower=recog_bounds[0], upper=recog_bounds[1], mass=recog_mass, plot=False)
-        pm.Beta("p_recog", alpha=float(recog.alpha), beta=float(recog.beta))
+        a, b = recog_prior(recog_bounds, recog_mass)
+        pm.Beta("p_recog", alpha=a, beta=b)
     return model
 
 
