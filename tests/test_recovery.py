@@ -9,37 +9,42 @@ from soulmates.simulate import simulate_diaries
 
 # Made up true values for the test, one mean per 5 year band, peaking at ages 20 to 24
 TRUE_BAND_MEANS = [1.0, 1.5, 2.0, 3.0, 4.0, 3.5, 3.0, 2.5, 2.5, 2.0, 2.0, 1.5, 1.5, 1.0, 1.0, 1.0, 1.0]
-TRUE_ALPHA = 2.0
+TRUE_ALPHA = 0.2  # close to the spread of the real diaries
 TRUE_WEEKEND = 1.4  # made up: a weekend day has 1.4 times the new contacts of a weekday
 TRUE_BETA_WEEKEND = 0.3365  # log(1.4)
-# Ages 18 to 60 by hand: 18 to 19 is 2 × 3.0, then 5 years each of 4.0, 3.5, 3.0, 2.5, 2.5, 2.0, 2.0, 1.5,
-# then age 60 is 1 × 1.5. That is 6 + 20 + 17.5 + 15 + 12.5 + 12.5 + 10 + 10 + 7.5 + 1.5 = 112.5, times 365 days
-# is 41062.5 weekday contacts. An average day of the week is (5 × 1 + 2 × 1.4) / 7 = 7.8 / 7 of a weekday,
-# so the lifetime count is 41062.5 × 7.8 / 7.
-TRUE_LIFETIME_NEW = 45755.357
+# Made up: four countries from quiet to talkative. Their logs add up to zero, so 1.0 is the typical country.
+TRUE_COUNTRY_FACTORS = [0.5, 0.8, 1.25, 2.0]
+# Ages 15 to 60 by hand: 5 years each of 3.0, 4.0, 3.5, 3.0, 2.5, 2.5, 2.0, 2.0, 1.5, then age 60 is 1 × 1.5.
+# That is 15 + 20 + 17.5 + 15 + 12.5 + 12.5 + 10 + 10 + 7.5 + 1.5 = 121.5, times 365 days is 44347.5
+# weekday contacts. An average day of the week is (5 × 1 + 2 × 1.4) / 7 = 7.8 / 7 of a weekday.
+TRUE_LIFETIME_TYPICAL = 49415.786  # 44347.5 × 7.8 / 7
+TRUE_LIFETIME_COUNTRY = [24707.893, 39532.629, 61769.732, 98831.571]  # the line above times each factor
 
 
 def test_recovers_true_values():
-    df = simulate_diaries(3000, TRUE_BAND_MEANS, TRUE_ALPHA, seed=1, weekend_effect=TRUE_WEEKEND)
+    df = simulate_diaries(6000, TRUE_BAND_MEANS, TRUE_ALPHA, seed=1, weekend_effect=TRUE_WEEKEND,
+                          country_factors=TRUE_COUNTRY_FACTORS)
     with build_model(df):
         post = pm.sample(random_seed=2, progressbar=False).posterior
-    # Limits from trials over six seeds, where the largest errors were 14%, 4.5%, 26% and 0.06
-    assert float(post["alpha"].mean()) == pytest.approx(TRUE_ALPHA, rel=0.25)
-    assert float(post["lifetime_new"].mean()) == pytest.approx(TRUE_LIFETIME_NEW, rel=0.10)
-    assert post["band_mean"].mean(("chain", "draw")).values == pytest.approx(TRUE_BAND_MEANS, rel=0.40)
-    assert float(post["beta_weekend"].mean()) == pytest.approx(TRUE_BETA_WEEKEND, abs=0.15)
+    mean = lambda name: post[name].mean(("chain", "draw")).values
+    # Limits from a trial over six seeds, where the largest errors were 6%, 4%, 10%, 34% and 0.14
+    assert float(mean("alpha")) == pytest.approx(TRUE_ALPHA, rel=0.25)
+    assert float(mean("lifetime_typical")) == pytest.approx(TRUE_LIFETIME_TYPICAL, rel=0.12)
+    assert mean("lifetime_country") == pytest.approx(TRUE_LIFETIME_COUNTRY, rel=0.25)
+    assert mean("band_mean") == pytest.approx(TRUE_BAND_MEANS, rel=0.60)
+    assert float(mean("beta_weekend")) == pytest.approx(TRUE_BETA_WEEKEND, abs=0.25)
 
 
 def test_p_find_by_hand():
     # 2 new people, sure recognition, pool of 4: 1 − (3/4)² = 7/16
-    idata = az.from_dict({"posterior": {"lifetime_new": np.array([[2.0]]), "p_recog": np.array([[1.0]])}})
+    idata = az.from_dict({"posterior": {"lifetime_anywhere": np.array([[2.0]]), "p_recog": np.array([[1.0]])}})
     assert p_find(idata, pool_size=4).item() == pytest.approx(7 / 16)
 
 
 def test_recog_prior_matches_the_guess():
-    # The guess "90% sure p_recog lies between 0.1 and 0.6" must put 90% of the prior draws in that range.
+    # The guess "90% sure p_recog lies between 0.3 and 0.9" must put 90% of the prior draws in that range.
     # With 4000 draws, chance alone moves the share by about 0.005.
-    df = pd.DataFrame({"age": [30], "new_contacts": [1], "weekend": [False]})
-    with build_model(df, recog_bounds=(0.1, 0.6), recog_mass=0.9):
+    df = pd.DataFrame({"age": [30, 30], "new_contacts": [1, 0], "weekend": [False, True], "country": ["A", "B"]})
+    with build_model(df, recog_bounds=(0.3, 0.9), recog_mass=0.9):
         p_recog = pm.sample_prior_predictive(draws=4000, random_seed=3).prior["p_recog"].values
-    assert ((p_recog > 0.1) & (p_recog < 0.6)).mean() == pytest.approx(0.90, abs=0.02)
+    assert ((p_recog > 0.3) & (p_recog < 0.9)).mean() == pytest.approx(0.90, abs=0.02)

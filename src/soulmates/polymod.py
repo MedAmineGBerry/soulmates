@@ -4,7 +4,12 @@ import pandas as pd
 PREFIX = "2008_Mossong_POLYMOD_"
 
 
-def load_polymod(raw_dir, max_drop=0.05):
+def contact_age(cont):
+    # the exact age where it is given, else the middle of the estimated range
+    return cont["cnt_age_exact"].fillna((cont["cnt_age_est_min"] + cont["cnt_age_est_max"]) / 2)
+
+
+def load_polymod(raw_dir, window=5, max_drop=0.05):
     def read(name):
         return pd.read_csv(f"{raw_dir}/{PREFIX}{name}.csv", low_memory=False)
 
@@ -13,7 +18,7 @@ def load_polymod(raw_dir, max_drop=0.05):
         .merge(read("sday")[["part_id", "dayofweek"]], on="part_id", how="left")
         .merge(read("hh_common")[["hh_id", "country"]], on="hh_id", how="left")
     )
-    cont = read("contact_common")
+    cont = read("contact_common").merge(part[["part_id", "part_age"]], on="part_id")
     no_age, no_day = part["part_age"].isna(), part["dayofweek"].isna()
     rules = [("no part_age", no_age), ("no dayofweek", no_day), ("no frequency_multi", cont["frequency_multi"].isna())]
     for rule, mask in rules:
@@ -21,8 +26,10 @@ def load_polymod(raw_dir, max_drop=0.05):
         if mask.mean() > max_drop:
             raise ValueError(f"{rule} removes {mask.mean():.1%} of rows, more than max_drop = {max_drop:.1%}")
     part = part[~(no_age | no_day)]
-    # A missing frequency_multi is never equal to 5, so those contacts do not count as new
-    new = cont[cont["frequency_multi"] == 5].groupby("part_id").size()
+    # New means "first time" (code 5) and within `window` years of the participant's age, because the
+    # soul mate pool only holds people of that age. A missing frequency or age compares as False.
+    in_window = (contact_age(cont) - cont["part_age"]).abs() <= window
+    new = cont[(cont["frequency_multi"] == 5) & in_window].groupby("part_id").size()
     return pd.DataFrame({
         "age": part["part_age"].astype(int).to_numpy(),
         "new_contacts": part["part_id"].map(new).fillna(0).astype(int).to_numpy(),

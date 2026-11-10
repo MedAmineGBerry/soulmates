@@ -18,31 +18,37 @@ def _():
 
 
 @app.cell
-def _(mo):
-    mo.md("""
+def _(inputs, mo, np):
+    one_in = round(1 / np.median(inputs["q"]), -1)
+    mo.md(f"""
     # Soul Mate Roulette
 
     Each spin plays out simulated lives. Under soul mate rules, one person in the pool is your match, and you
-    have to meet them, talk to them and recognize them. Under real world rules, about 1 in 2,400 of the new
-    people you talk to could be a partner, as fitted on the How Couples Meet and Stay Together survey.
+    have to meet them, talk to them and recognize each other. Under real world rules, about 1 in {one_in:,.0f}
+    of the people your age you talk to could be a partner, as fitted on the How Couples Meet and Stay Together
+    survey. Every life meets its own number of people, because some of us talk to many strangers and some to few.
     """)
     return
 
 
 @app.cell
-def _(mo):
+def _(inputs, mo):
+    names = {"BE": "Belgium", "DE": "Germany", "FI": "Finland", "FR": "France", "GB": "Great Britain",
+             "IT": "Italy", "LU": "Luxembourg", "NL": "the Netherlands", "PL": "Poland"}
+    places = {"a typical country": "typical"} | {names.get(code, code): code for code in sorted(inputs["countries"])}
     age = mo.ui.slider(18, 60, value=30, label="Your age", show_value=True)
+    country = mo.ui.dropdown(places, value="a typical country", label="You live in")
     pool = mo.ui.dropdown(
         {"the whole world": "world", "the 8 POLYMOD countries": "europe"},
         value="the whole world",
         label="Your soul mate lives in",
     )
-    lower = mo.ui.slider(0.01, 0.99, step=0.01, value=0.1, label="Lower bound for p_recog", show_value=True)
-    upper = mo.ui.slider(0.01, 0.99, step=0.01, value=0.6, label="Upper bound for p_recog", show_value=True)
+    lower = mo.ui.slider(0.01, 0.99, step=0.01, value=0.3, label="Lower bound for p_recog", show_value=True)
+    upper = mo.ui.slider(0.01, 0.99, step=0.01, value=0.9, label="Upper bound for p_recog", show_value=True)
     one = mo.ui.run_button(label="Spin 1 life")
     many = mo.ui.run_button(label="Spin 1,000 lives")
-    mo.vstack([mo.hstack([age, pool]), mo.hstack([lower, upper]), mo.hstack([one, many])])
-    return age, lower, many, one, pool, upper
+    mo.vstack([mo.hstack([age, country, pool]), mo.hstack([lower, upper]), mo.hstack([one, many])])
+    return age, country, lower, many, one, pool, upper
 
 
 @app.cell
@@ -54,14 +60,13 @@ def _(lower, mo, upper):
 
 
 @app.cell
-def _(age, bounds, inputs, mo, one, pool, spin):
+def _(age, bounds, country, inputs, mo, one, pool, spin):
     mo.stop(not one.value, mo.md("Press *Spin 1 life* to play out one life."))
-    life = spin(inputs, age.value, pool.value, bounds, n_lives=1, seed=None).iloc[0]
-    met = round(inputs["curve"][age.value])
-    real = f"met a possible partner at age {life.age_met}" if life.found_partner else "did not meet anyone"
+    life = spin(inputs, age.value, pool.value, bounds, n_lives=1, seed=None, country=country.value).iloc[0]
+    real = f"met a possible partner at age {life.age_met}" if life.found_partner else "did not meet a possible partner"
     soul = "found your soul mate" if life.found_soul_mate else "did not find your soul mate"
     mo.md(f"""
-    By age {age.value} you have met and talked to about {met:,} new people.
+    By age {age.value} this life has met and talked to {life.people_met:,} new people of its own age.
 
     - Real world rules: you {real}.
     - Soul mate rules: you {soul}.
@@ -70,12 +75,11 @@ def _(age, bounds, inputs, mo, one, pool, spin):
 
 
 @app.cell
-def _(age, bounds, inputs, many, mo, np, plt, pool, spin):
+def _(age, bounds, country, inputs, many, mo, plt, pool, spin):
     mo.stop(not many.value, mo.md("Press *Spin 1,000 lives* to play out a thousand lives."))
-    lives = spin(inputs, age.value, pool.value, bounds, n_lives=1000, seed=None)
+    lives = spin(inputs, age.value, pool.value, bounds, n_lives=1000, seed=None, country=country.value)
     partners, soul_mates = int(lives["found_partner"].sum()), int(lives["found_soul_mate"].sum())
-    pool_size = inputs["pools"][pool.value][age.value]
-    k = np.median(lives["q"] * pool_size / lives["p_recog"])
+    possible = (lives["q"] * lives["people_met"]).mean()
     fig, ax = plt.subplots(figsize=(6, 2.5))
     ax.barh(["soul mate rules", "real world rules"], [soul_mates, partners])
     ax.set(xlim=(0, 1000), xlabel="lives out of 1,000 that found someone")
@@ -83,8 +87,9 @@ def _(age, bounds, inputs, many, mo, np, plt, pool, spin):
     mo.vstack([
         mo.md(
             f"Out of 1,000 lives, {partners:,} met a possible partner under real world rules "
-            f"and {soul_mates:,} found their soul mate. The real world rules mean about {k:,.0f} "
-            f"possible partners in a pool of {pool_size:,.0f} people."
+            f"and {soul_mates:,} found their soul mate. The lives met between {int(lives['people_met'].min()):,} "
+            f"and {int(lives['people_met'].max()):,} people of their own age, and on average about "
+            f"{possible:.0f} of them could have been a partner."
         ),
         fig,
     ])
