@@ -5,3 +5,6 @@ __pycache__/
 data/*
 !data/demo_inputs.json
 .DS_Store
+
+# the talk deck and its handout, kept out of the public repository until the talk is given
+private/
