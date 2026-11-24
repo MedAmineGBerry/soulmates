@@ -43,7 +43,7 @@ def _(inputs, mo):
         value="the whole world",
         label="Your soul mate lives in",
     )
-    lower = mo.ui.slider(0.01, 0.99, step=0.01, value=0.3, label="Lower bound for p_recog", show_value=True)
+    lower = mo.ui.slider(0.01, 0.99, step=0.01, value=0.6, label="Lower bound for p_recog", show_value=True)
     upper = mo.ui.slider(0.01, 0.99, step=0.01, value=0.9, label="Upper bound for p_recog", show_value=True)
     one = mo.ui.run_button(label="Spin 1 life")
     many = mo.ui.run_button(label="Spin 1,000 lives")

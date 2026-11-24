@@ -11,7 +11,7 @@ def age_band(age):
     return np.minimum(np.asarray(age) // 5, N_BANDS - 1)
 
 
-def recog_prior(bounds=(0.3, 0.9), mass=0.9):
+def recog_prior(bounds=(0.6, 0.9), mass=0.9):
     # The speaker's guess, "I am mass sure p_recog lies between the bounds", turned into the
     # flattest Beta prior that meets it (maximum entropy), so the answer is unique
     recog = pz.Beta()
@@ -19,7 +19,7 @@ def recog_prior(bounds=(0.3, 0.9), mass=0.9):
     return float(recog.alpha), float(recog.beta)
 
 
-def build_model(df, search_ages=(15, 60), recog_bounds=(0.3, 0.9), recog_mass=0.9):
+def build_model(df, search_ages=(15, 60), recog_bounds=(0.6, 0.9), recog_mass=0.9):
     band = age_band(df["age"].to_numpy())
     weekend = df["weekend"].to_numpy().astype(float)
     countries, country = np.unique(df["country"].to_numpy().astype(str), return_inverse=True)

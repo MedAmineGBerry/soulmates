@@ -42,9 +42,9 @@ def test_p_find_by_hand():
 
 
 def test_recog_prior_matches_the_guess():
-    # The guess "90% sure p_recog lies between 0.3 and 0.9" must put 90% of the prior draws in that range.
+    # The guess "90% sure p_recog lies between 0.6 and 0.9" must put 90% of the prior draws in that range.
     # With 4000 draws, chance alone moves the share by about 0.005.
     df = pd.DataFrame({"age": [30, 30], "new_contacts": [1, 0], "weekend": [False, True], "country": ["A", "B"]})
-    with build_model(df, recog_bounds=(0.3, 0.9), recog_mass=0.9):
+    with build_model(df, recog_bounds=(0.6, 0.9), recog_mass=0.9):
         p_recog = pm.sample_prior_predictive(draws=4000, random_seed=3).prior["p_recog"].values
-    assert ((p_recog > 0.3) & (p_recog < 0.9)).mean() == pytest.approx(0.90, abs=0.02)
+    assert ((p_recog > 0.6) & (p_recog < 0.9)).mean() == pytest.approx(0.90, abs=0.02)

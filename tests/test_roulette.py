@@ -8,7 +8,7 @@ from soulmates.roulette import spin
 # every age, and one country that is twice as talkative as the typical one
 CURVE = np.maximum(np.arange(101) - 14, 0) * 300.0
 POOLS = {"world": {age: 1e9 for age in range(18, 61)}, "europe": {age: 4e7 for age in range(18, 61)}}
-ARGS = dict(age=30, pool="world", recog_bounds=(0.3, 0.9), n_lives=1000, seed=1)
+ARGS = dict(age=30, pool="world", recog_bounds=(0.6, 0.9), n_lives=1000, seed=1)
 
 
 def inputs_with(q, k):
