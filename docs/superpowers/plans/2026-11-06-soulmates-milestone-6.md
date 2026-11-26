@@ -1,8 +1,8 @@
-# Soul mates milestone 6 implementation plan: Soul Mate Roulette
+# Soulmates milestone 6 implementation plan: Soulmate Roulette
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the live demo. A marimo app plays out simulated lives under soul mate rules and under real world rules.
+**Goal:** Build the live demo. A marimo app plays out simulated lives under soulmate rules and under real world rules.
 
 **Architecture:** `src/soulmates/roulette.py` holds `load_inputs` and `spin`, the only logic. `scripts/export_demo_inputs.py` writes `data/demo_inputs.json` from the model fits, and that file is committed. `demo/roulette.py` is a marimo app that wires sliders and buttons to `spin`.
 
@@ -101,7 +101,7 @@ Expected: collection error with `ModuleNotFoundError: No module named 'soulmates
 `src/soulmates/roulette.py`:
 
 ```python
-"""Soul Mate Roulette: play out simulated lives under soul mate rules and under real world rules."""
+"""Soulmate Roulette: play out simulated lives under soulmate rules and under real world rules."""
 import json
 
 import numpy as np
@@ -180,7 +180,7 @@ Expected: 4 passed. The flag turns warnings into errors, so this also checks tha
 `scripts/export_demo_inputs.py`:
 
 ```python
-"""Write data/demo_inputs.json for Soul Mate Roulette: the lifetime curve, the q draws and the pool sizes.
+"""Write data/demo_inputs.json for Soulmate Roulette: the lifetime curve, the q draws and the pool sizes.
 
 It fits the POLYMOD model and the free HCMST model with the same seeds as notebook 03, so it needs the
 HCMST file in data/raw. The JSON holds model results and no survey rows, and it is committed to git.
@@ -297,9 +297,9 @@ def _():
 @app.cell
 def _(mo):
     mo.md("""
-    # Soul Mate Roulette
+    # Soulmate Roulette
 
-    Each spin plays out simulated lives. Under soul mate rules, one person in the pool is your match, and you
+    Each spin plays out simulated lives. Under soulmate rules, one person in the pool is your match, and you
     have to meet them, talk to them and recognize them. Under real world rules, about 1 in 2,400 of the new
     people you talk to could be a partner, as fitted on the How Couples Meet and Stay Together survey.
     """)
@@ -312,7 +312,7 @@ def _(mo):
     pool = mo.ui.dropdown(
         {"the whole world": "world", "the 8 POLYMOD countries": "europe"},
         value="the whole world",
-        label="Your soul mate lives in",
+        label="Your soulmate lives in",
     )
     lower = mo.ui.slider(0.01, 0.99, step=0.01, value=0.1, label="Lower bound for p_recog", show_value=True)
     upper = mo.ui.slider(0.01, 0.99, step=0.01, value=0.6, label="Upper bound for p_recog", show_value=True)
@@ -336,12 +336,12 @@ def _(age, bounds, inputs, mo, one, pool, spin):
     life = spin(inputs, age.value, pool.value, bounds, n_lives=1, seed=None).iloc[0]
     met = round(inputs["curve"][age.value])
     real = f"met a possible partner at age {life.age_met}" if life.found_partner else "did not meet anyone"
-    soul = "found your soul mate" if life.found_soul_mate else "did not find your soul mate"
+    soul = "found your soulmate" if life.found_soul_mate else "did not find your soulmate"
     mo.md(f"""
     By age {age.value} you have met and talked to about {met:,} new people.
 
     - Real world rules: you {real}.
-    - Soul mate rules: you {soul}.
+    - Soulmate rules: you {soul}.
     """)
     return
 
@@ -354,13 +354,13 @@ def _(age, bounds, inputs, many, mo, np, plt, pool, spin):
     pool_size = inputs["pools"][pool.value][age.value]
     k = np.median(lives["q"] * pool_size / lives["p_recog"])
     fig, ax = plt.subplots(figsize=(6, 2.5))
-    ax.barh(["soul mate rules", "real world rules"], [soul_mates, partners])
+    ax.barh(["soulmate rules", "real world rules"], [soul_mates, partners])
     ax.set(xlim=(0, 1000), xlabel="lives out of 1,000 that found someone")
     fig.tight_layout()
     mo.vstack([
         mo.md(
             f"Out of 1,000 lives, {partners:,} met a possible partner under real world rules "
-            f"and {soul_mates:,} found their soul mate. The real world rules mean about {k:,.0f} "
+            f"and {soul_mates:,} found their soulmate. The real world rules mean about {k:,.0f} "
             f"possible partners in a pool of {pool_size:,.0f} people."
         ),
         fig,
@@ -384,8 +384,8 @@ Open `http://localhost:2718` in the browser pane. The first cell imports PyMC an
 
 1. The sliders show their values: 30, 0.1 and 0.6.
 2. "Spin 1 life" shows about 7,965 new people by age 30. It then shows either an age at which a possible partner was met, or "did not meet anyone".
-3. "Spin 1,000 lives" with the whole world shows about 970 lives with a partner, 0 or 1 soul mates, and about 1.6 million possible partners. In the scratch trial it showed 972 and 974 partners, 0 soul mates, and 1,592,510 and 1,638,266 possible partners.
-4. With the 8 POLYMOD countries it shows about 965 partners and about 47,000 possible partners. In the scratch trial it showed 965 partners, 1 soul mate and 46,924 possible partners.
+3. "Spin 1,000 lives" with the whole world shows about 970 lives with a partner, 0 or 1 soulmates, and about 1.6 million possible partners. In the scratch trial it showed 972 and 974 partners, 0 soulmates, and 1,592,510 and 1,638,266 possible partners.
+4. With the 8 POLYMOD countries it shows about 965 partners and about 47,000 possible partners. In the scratch trial it showed 965 partners, 1 soulmate and 46,924 possible partners.
 
 The pool dropdown is a native select inside a shadow root, and in the browser pane it does not take keyboard input. Set it from the page with JavaScript if needed. Stop the server afterwards.
 

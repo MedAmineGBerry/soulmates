@@ -1,4 +1,4 @@
-# Soul mates milestone 7 implementation plan: fixing the calculus
+# Soulmates milestone 7 implementation plan: fixing the calculus
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -26,7 +26,7 @@ src/soulmates/france.py           # new: load_france_days, load_diaries
 scripts/download_france.py        # new: download and MD5 check
 src/soulmates/model.py            # changed: country level, lifetime_typical, lifetime_country, lifetime_anywhere
 src/soulmates/simulate.py         # changed: country_factors
-src/soulmates/match.py            # changed: partner_chance, model with q and k, flat model; soul mate model removed
+src/soulmates/match.py            # changed: partner_chance, model with q and k, flat model; soulmate model removed
 src/soulmates/roulette.py         # changed: personal rate, country, people_met
 scripts/export_demo_inputs.py     # changed: country model, k draws, country factors
 data/demo_inputs.json             # regenerated
@@ -142,7 +142,7 @@ def load_polymod(raw_dir, window=5, max_drop=0.05):
             raise ValueError(f"{rule} removes {mask.mean():.1%} of rows, more than max_drop = {max_drop:.1%}")
     part = part[~(no_age | no_day)]
     # New means "first time" (code 5) and within `window` years of the participant's age, because the
-    # soul mate pool only holds people of that age. A missing frequency or age compares as False.
+    # soulmate pool only holds people of that age. A missing frequency or age compares as False.
     in_window = (contact_age(cont) - cont["part_age"]).abs() <= window
     new = cont[(cont["frequency_multi"] == 5) & in_window].groupby("part_id").size()
     return pd.DataFrame({
@@ -399,7 +399,7 @@ Expected: 2 failed, 1 passed. `test_recovers_true_values` fails with `TypeError:
 `src/soulmates/model.py`, full file:
 
 ```python
-"""PyMC model for new contacts per day by age band and country, and the chance of finding your soul mate."""
+"""PyMC model for new contacts per day by age band and country, and the chance of finding your soulmate."""
 import numpy as np
 import preliz as pz
 import pymc as pm
@@ -718,7 +718,7 @@ Expected: 4 failed, 1 passed. The failures are `KeyError: 'people_met'` and `Typ
 `src/soulmates/roulette.py`, full file:
 
 ```python
-"""Soul Mate Roulette: play out simulated lives under soul mate rules and under real world rules."""
+"""Soulmate Roulette: play out simulated lives under soulmate rules and under real world rules."""
 import json
 
 import numpy as np
@@ -792,7 +792,7 @@ Expected: 5 passed.
 `scripts/export_demo_inputs.py`, full file:
 
 ```python
-"""Write data/demo_inputs.json for Soul Mate Roulette: the lifetime curve, the country factors, the q and k
+"""Write data/demo_inputs.json for Soulmate Roulette: the lifetime curve, the country factors, the q and k
 draws and the pool sizes.
 
 It fits the contact model and the partner model with the same seeds as the notebooks, so it needs the
@@ -878,9 +878,9 @@ def _():
 def _(inputs, mo, np):
     one_in = round(1 / np.median(inputs["q"]), -1)
     mo.md(f"""
-    # Soul Mate Roulette
+    # Soulmate Roulette
 
-    Each spin plays out simulated lives. Under soul mate rules, one person in the pool is your match, and you
+    Each spin plays out simulated lives. Under soulmate rules, one person in the pool is your match, and you
     have to meet them, talk to them and recognize each other. Under real world rules, about 1 in {one_in:,.0f}
     of the people your age you talk to could be a partner, as fitted on the How Couples Meet and Stay Together
     survey. Every life meets its own number of people, because some of us talk to many strangers and some to few.
@@ -898,7 +898,7 @@ def _(inputs, mo):
     pool = mo.ui.dropdown(
         {"the whole world": "world", "the 8 POLYMOD countries": "europe"},
         value="the whole world",
-        label="Your soul mate lives in",
+        label="Your soulmate lives in",
     )
     lower = mo.ui.slider(0.01, 0.99, step=0.01, value=0.3, label="Lower bound for p_recog", show_value=True)
     upper = mo.ui.slider(0.01, 0.99, step=0.01, value=0.9, label="Upper bound for p_recog", show_value=True)
@@ -921,12 +921,12 @@ def _(age, bounds, country, inputs, mo, one, pool, spin):
     mo.stop(not one.value, mo.md("Press *Spin 1 life* to play out one life."))
     life = spin(inputs, age.value, pool.value, bounds, n_lives=1, seed=None, country=country.value).iloc[0]
     real = f"met a possible partner at age {life.age_met}" if life.found_partner else "did not meet a possible partner"
-    soul = "found your soul mate" if life.found_soul_mate else "did not find your soul mate"
+    soul = "found your soulmate" if life.found_soul_mate else "did not find your soulmate"
     mo.md(f"""
     By age {age.value} this life has met and talked to {life.people_met:,} new people of its own age.
 
     - Real world rules: you {real}.
-    - Soul mate rules: you {soul}.
+    - Soulmate rules: you {soul}.
     """)
     return
 
@@ -938,13 +938,13 @@ def _(age, bounds, country, inputs, many, mo, plt, pool, spin):
     partners, soul_mates = int(lives["found_partner"].sum()), int(lives["found_soul_mate"].sum())
     possible = (lives["q"] * lives["people_met"]).mean()
     fig, ax = plt.subplots(figsize=(6, 2.5))
-    ax.barh(["soul mate rules", "real world rules"], [soul_mates, partners])
+    ax.barh(["soulmate rules", "real world rules"], [soul_mates, partners])
     ax.set(xlim=(0, 1000), xlabel="lives out of 1,000 that found someone")
     fig.tight_layout()
     mo.vstack([
         mo.md(
             f"Out of 1,000 lives, {partners:,} met a possible partner under real world rules "
-            f"and {soul_mates:,} found their soul mate. The lives met between {int(lives['people_met'].min()):,} "
+            f"and {soul_mates:,} found their soulmate. The lives met between {int(lives['people_met'].min()):,} "
             f"and {int(lives['people_met'].max()):,} people of their own age, and on average about "
             f"{possible:.0f} of them could have been a partner."
         ),
@@ -965,9 +965,9 @@ Expected: no output, exit code 0.
 Run in the background: `uv run marimo run demo/roulette.py --headless --port 2718 --no-token`
 Open `http://localhost:2718` in the browser pane. The controls appear after about 25 seconds. Then check:
 
-1. The sliders show 30, 0.3 and 0.9, and there are two dropdowns, "You live in" and "Your soul mate lives in".
+1. The sliders show 30, 0.3 and 0.9, and there are two dropdowns, "You live in" and "Your soulmate lives in".
 2. "Spin 1 life" names how many people this life has met, and that number changes from spin to spin.
-3. "Spin 1,000 lives" in a typical country shows about 970 lives with a possible partner and 0 or 1 soul mates. In a run of 100,000 lives in the scratch copy, 967 per 1,000 met a possible partner. The median life met 2,425 people, and the lives averaged 6.6 possible partners.
+3. "Spin 1,000 lives" in a typical country shows about 970 lives with a possible partner and 0 or 1 soulmates. In a run of 100,000 lives in the scratch copy, 967 per 1,000 met a possible partner. The median life met 2,425 people, and the lives averaged 6.6 possible partners.
 4. With "You live in" set to Italy the figure rises to about 990 per 1,000. With Germany it falls to about 780.
 
 The dropdowns are native selects inside a shadow root, and in the browser pane they do not take keyboard input. Set them from the page with JavaScript if needed. Stop the server afterwards.
@@ -991,7 +991,7 @@ The dropdowns are native selects inside a shadow root, and in the browser pane t
 Save this script as a scratch file outside the repo, for example `build_notebooks.py`, and run it from the repo root with `uv run python build_notebooks.py`.
 
 ```python
-"""Build the three notebooks of the soul mates project. Run from the repo root, then execute them with nbconvert."""
+"""Build the three notebooks of the soulmates project. Run from the repo root, then execute them with nbconvert."""
 from textwrap import dedent
 
 import nbformat as nbf
@@ -1013,12 +1013,12 @@ def write(name, cells):
 # ---------------------------------------------------------------- 01 simulated
 write("01_simulated", [
     md("""
-        # Soul mates with Bayes, on simulated data
+        # Soulmates with Bayes, on simulated data
 
-        Everyone has one soul mate, drawn at random from the M people born within 5 years of them. You find them
+        Everyone has one soulmate, drawn at random from the M people born within 5 years of them. You find them
         only if you meet and talk to them and you both recognize each other. This notebook estimates how many new
         people of your own age you meet per day, turns that into new people met between 15 and 60, and then into
-        the chance of finding your soul mate. The data is simulated with known true values, so we can check the model.
+        the chance of finding your soulmate. The data is simulated with known true values, so we can check the model.
     """),
     code("""
         import arviz as az
@@ -1095,7 +1095,7 @@ write("01_simulated", [
                   f"({np.percentile(draws, 3):.2f} to {np.percentile(draws, 97):.2f})")
     """),
     md("""
-        ## The chance of finding your soul mate
+        ## The chance of finding your soulmate
 
         P_find = 1 − (1 − p_recog / M) ^ lifetime. The pool M is made up here, because the data is simulated.
         `lifetime_anywhere` is the count for a person in a country we have no data for.
@@ -1105,7 +1105,7 @@ write("01_simulated", [
         pf = p_find(idata, POOL_SIZE).values.ravel()
         fig, ax = plt.subplots()
         ax.hist(np.log10(pf), bins=60)
-        ax.set(xlabel="log10 of P(find your soul mate)", ylabel="posterior draws",
+        ax.set(xlabel="log10 of P(find your soulmate)", ylabel="posterior draws",
                title=f"P_find with a made up pool of {POOL_SIZE:.0e} people")
         print(f"P_find mean {pf.mean():.2e}, 94% interval {np.percentile(pf, 3):.2e} to {np.percentile(pf, 97):.2e}")
     """),
@@ -1114,7 +1114,7 @@ write("01_simulated", [
 # ---------------------------------------------------------------- 02 contacts and odds
 write("02_polymod", [
     md("""
-        # Soul mates with Bayes, on real contact diaries
+        # Soulmates with Bayes, on real contact diaries
 
         Two surveys asked people to write down everyone they met on a day. POLYMOD covers 8 European countries
         in 2005 and 2006 (Mossong et al. 2008, Zenodo record 3874557, licence CC BY-NC 4.0). The French survey
@@ -1123,7 +1123,7 @@ write("02_polymod", [
         each contact, people said how often they usually meet that person, and a contact marked "first time" is
         a new person.
 
-        Your soul mate is drawn from the people within 5 years of your age. So this notebook counts only new
+        Your soulmate is drawn from the people within 5 years of your age. So this notebook counts only new
         people within 5 years of the participant's age. Strangers you only glance at are not counted.
 
         Run these once before this notebook: `uv run python scripts/download_polymod.py`,
@@ -1204,7 +1204,7 @@ write("02_polymod", [
         ## The odds, country by country
 
         P_find = 1 − (1 − p_recog / M) ^ lifetime. M is everyone alive in 2023 aged 25 to 35, from the UN World
-        Population Prospects 2024 (licence CC BY 3.0 IGO). Your soul mate can live anywhere, so every country
+        Population Prospects 2024 (licence CC BY 3.0 IGO). Your soulmate can live anywhere, so every country
         uses the world pool. The lifetime count is the number of new people of your age you talk to between
         15 and 60.
     """),
@@ -1253,11 +1253,11 @@ write("02_polymod", [
             print(f"{label}: M = {m:,.0f}, P_find mean {pf.mean():.2e} (1 in {1 / pf.mean():,.0f}), "
                   f"94% interval 1 in {1 / np.percentile(pf, 3):,.0f} to 1 in {1 / np.percentile(pf, 97):,.0f}")
             ax.hist(np.log10(pf), bins=60, alpha=0.5, label=label)
-        ax.set(xlabel="log10 of P(find your soul mate)", ylabel="posterior draws",
+        ax.set(xlabel="log10 of P(find your soulmate)", ylabel="posterior draws",
                title="P_find for a person somewhere in the world, age 30 in 2023")
         ax.legend()
         headline = p_find(idata, M).values.mean()
-        print(f"people of your generation who find their one soul mate: about {M * headline:,.0f} of {M:,.0f}")
+        print(f"people of your generation who find their one soulmate: about {M * headline:,.0f} of {M:,.0f}")
     """),
     md("""
         ## The best case
@@ -1292,7 +1292,7 @@ write("03_partners", [
     md("""
         # How many of them could be the one?
 
-        The soul mate premise gives each person one possible partner in a pool of about 1.3 billion. The How
+        The soulmate premise gives each person one possible partner in a pool of about 1.3 billion. The How
         Couples Meet and Stay Together survey (HCMST) shows how many people actually have had a partner by each
         age. This notebook asks what share of the people you talk to would have to be possible partners for the
         two to match.
@@ -1470,7 +1470,7 @@ Expected: each exits without error, in about 45, 70 and 90 seconds. In the scrat
 02: lifetime_typical: median 5,778, 94% interval 5,247 to 6,362
 02: world: M = 1,328,956,521, P_find mean 3.07e-06 (1 in 325,806), 94% interval 1 in 1,526,676 to 1 in 114,995
 02: 8 POLYMOD countries: M = 39,411,641, P_find mean 1.03e-04 (1 in 9,663), 94% interval 1 in 45,276 to 1 in 3,411
-02: people of your generation who find their one soul mate: about 4,079 of 1,328,956,521
+02: people of your generation who find their one soulmate: about 4,079 of 1,328,956,521
 02: most talkative country: Italy, 9,617 new people of your age between 15 and 60
 02: with the guess for p_recog: 1 in 231,870
 02: if recognition were certain: 1 in 138,194

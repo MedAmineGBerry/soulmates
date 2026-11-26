@@ -1,4 +1,4 @@
-"""Download the WPP 2024 single age file, check its MD5 and keep the rows for the soul mate pool."""
+"""Download the WPP 2024 single age file, check its MD5 and keep the rows for the soulmate pool."""
 import hashlib
 import pathlib
 import urllib.request

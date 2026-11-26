@@ -1,6 +1,6 @@
-# Soul mates with Bayes, milestone 6: Soul Mate Roulette
+# Soulmates with Bayes, milestone 6: Soulmate Roulette
 
-This milestone builds the live demo for the talk. Each spin plays out simulated lives and checks them under two sets of rules. One is a single soul mate in the pool. The other is the real world match chance q from HCMST. The audience sees that soul mate lives almost never end in a match, while real world lives almost always do. The earlier specs are in this folder. This spec only describes what is new.
+This milestone builds the live demo for the talk. Each spin plays out simulated lives and checks them under two sets of rules. One is a single soulmate in the pool. The other is the real world match chance q from HCMST. The audience sees that soulmate lives almost never end in a match, while real world lives almost always do. The earlier specs are in this folder. This spec only describes what is new.
 
 ## What one spin does
 
@@ -10,7 +10,7 @@ A spin plays out a number of lives, 1 or 1,000. For each life:
 2. Draw one p_recog from the prior built from the current guess with PreliZ `maxent`.
 3. Take N = N(age), the number of new people met and talked to from age 15 up to the chosen age, from the POLYMOD curve.
 4. Real world rules: the life found someone with chance 1 − (1 − q) ^ N. If it did, draw the number of the first matching meeting from a geometric distribution with chance q. Turn that number into an age through the curve, the first age a with N(a) at or above it.
-5. Soul mate rules: the life found its soul mate with chance 1 − (1 − p_recog / M) ^ N. M is the pool size for the chosen age and pool.
+5. Soulmate rules: the life found its soulmate with chance 1 − (1 − p_recog / M) ^ N. M is the pool size for the chosen age and pool.
 
 Steps 1 and 2 put the uncertainty about q and p_recog into the lives. The rest of the randomness is who the N people turn out to be.
 
@@ -56,7 +56,7 @@ def spin(inputs, age, pool, recog_bounds, n_lives, seed, recog_mass=0.9): ...
 
 It shows:
 
-1. For one life: the number of new people met by that age, and whether and at which age the real world rules found someone. Next to it, whether the soul mate rules did.
+1. For one life: the number of new people met by that age, and whether and at which age the real world rules found someone. Next to it, whether the soulmate rules did.
 2. For 1,000 lives: the tally under both rules, as two numbers and a bar chart.
 3. K = q × M / p_recog for the current guess and pool, as a median.
 
@@ -64,7 +64,7 @@ The app has no logic of its own. It calls `load_inputs` and `spin`.
 
 It starts offline with `uv run marimo run demo/roulette.py`. Its first cell imports PyMC and PreliZ, so in the trial the controls appeared after about 25 seconds. The speaker starts the app before the talk.
 
-In the trial, 1,000 lives at age 30 gave 972 and 974 possible partners and 0 soul mates for the world pool. For the 8 POLYMOD countries they gave 965 partners and 1 soul mate.
+In the trial, 1,000 lives at age 30 gave 972 and 974 possible partners and 0 soulmates for the world pool. For the 8 POLYMOD countries they gave 965 partners and 1 soulmate.
 
 marimo 0.25.2 becomes a new dependency. On 2026-11-06 it installed next to PyMC 6.4.0, PyTensor 3.3.7, ArviZ 1.3.0 and PreliZ 0.28.0 without changing them, and `uv pip check` reported no conflicts.
 

@@ -1,4 +1,4 @@
-# Soul mates with Bayes, milestone 2
+# Soulmates with Bayes, milestone 2
 
 This milestone replaces the simulated diaries with the real POLYMOD contact survey. It adds a download script, a loader that turns the raw files into one row per participant, and a weekend term in the model. The milestone 1 spec is in `2026-11-05-soulmates-design.md`. This spec only describes what changes.
 

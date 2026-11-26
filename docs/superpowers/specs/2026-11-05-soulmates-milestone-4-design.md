@@ -1,4 +1,4 @@
-# Soul mates with Bayes, milestone 4
+# Soulmates with Bayes, milestone 4
 
 This milestone changes the premise to "people you talk to", removes the guessed `p_eye`, and builds the prior for `p_recog` from a stated guess. It also adds a check of how much the result depends on Germany. The earlier specs are `2026-11-05-soulmates-design.md`, `2026-11-05-soulmates-milestone-2-design.md` and `2026-11-05-soulmates-milestone-3-design.md`. This spec only describes what changes.
 
@@ -6,13 +6,13 @@ This milestone changes the premise to "people you talk to", removes the guessed 
 
 POLYMOD counts a contact in two cases (Mossong et al. 2008, Methods). Either two people touch skin to skin, such as in a kiss or a handshake. Or they hold a face to face conversation of at least three words. Strangers you only glance at are not in the data. Our lifetime count of new people therefore counts new people you meet and talk to.
 
-The talk uses that version of the premise. You find your soul mate if you meet and talk to them and you both recognize each other. Munroe's version counts every glance, which would need a count of glances per day that no data here gives.
+The talk uses that version of the premise. You find your soulmate if you meet and talk to them and you both recognize each other. Munroe's version counts every glance, which would need a count of glances per day that no data here gives.
 
 `p_eye` was the share of new contacts that include eye contact. A face to face conversation almost always does, so `p_eye` is close to 1. Its old prior had a mean of 0.5, which halved the lifetime count without a reason. This milestone removes it.
 
 ## The p_recog prior
 
-`p_recog` is the chance that, when you meet your soul mate and talk for the first time, you both realize it then. No data informs it. The speaker states the guess as a sentence:
+`p_recog` is the chance that, when you meet your soulmate and talk for the first time, you both realize it then. No data informs it. The speaker states the guess as a sentence:
 
 "I am 90% sure that p_recog lies between 0.1 and 0.6."
 
@@ -86,4 +86,4 @@ A trial run of both notebooks in a scratch copy on 2026-11-05 gave these numbers
 
 1. Glances with strangers. They need a prior with no data behind it.
 2. A country effect in the model. The Germany check is only a second fit.
-3. The comparison with How Couples Meet and Stay Together and the Soul Mate Roulette demo. Both are later milestones.
+3. The comparison with How Couples Meet and Stay Together and the Soulmate Roulette demo. Both are later milestones.

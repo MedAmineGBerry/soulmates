@@ -1,8 +1,8 @@
-# Soul mates milestone 5 implementation plan
+# Soulmates milestone 5 implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Test the one soul mate premise against HCMST 2017. Fit a free match chance q per new person you talk to and compare it with the soul mate model by LOO. Then report K, the number of possible partners in the world pool.
+**Goal:** Test the one soulmate premise against HCMST 2017. Fit a free match chance q per new person you talk to and compare it with the soulmate model by LOO. Then report K, the number of possible partners in the world pool.
 
 **Architecture:** `src/soulmates/hcmst.py` loads age, ever had a partner and the weight. `src/soulmates/match.py` turns the POLYMOD posterior into the lifetime curve N(a) and builds the two models. `model.py` gains `recog_prior`, so both modules build the p_recog prior the same way. Notebook 03 runs the comparison.
 
@@ -178,7 +178,7 @@ Expected: collection error with `ModuleNotFoundError: No module named 'soulmates
 `src/soulmates/model.py`, full file:
 
 ```python
-"""PyMC model for new contacts per day, and the chance of finding your soul mate."""
+"""PyMC model for new contacts per day, and the chance of finding your soulmate."""
 import numpy as np
 import preliz as pz
 import pymc as pm
@@ -235,7 +235,7 @@ def p_find(idata, pool_size):
 `src/soulmates/match.py`:
 
 ```python
-"""Who has had a partner by which age: a free match chance q against the one soul mate premise."""
+"""Who has had a partner by which age: a free match chance q against the one soulmate premise."""
 import numpy as np
 import pymc as pm
 import pytensor.tensor as pt
@@ -271,7 +271,7 @@ def build_soulmate_model(df, curve, pool_size, recog_bounds=(0.1, 0.6), recog_ma
     with pm.Model() as model:
         a, b = recog_prior(recog_bounds, recog_mass)
         p_recog = pm.Beta("p_recog", alpha=a, beta=b)
-        _likelihood(df, curve, pm.Deterministic("q", p_recog / pool_size))  # one soul mate in the pool
+        _likelihood(df, curve, pm.Deterministic("q", p_recog / pool_size))  # one soulmate in the pool
     return model
 ```
 
@@ -302,8 +302,8 @@ import nbformat as nbf
 
 md, code = nbf.v4.new_markdown_cell, nbf.v4.new_code_cell
 cells = [
-    md("# How many soul mates do you need?\n\n"
-       "The soul mate premise gives each person one possible partner in a pool of about 1.3 billion. "
+    md("# How many soulmates do you need?\n\n"
+       "The soulmate premise gives each person one possible partner in a pool of about 1.3 billion. "
        "The How Couples Meet and Stay Together survey (HCMST, Rosenfeld and colleagues, Stanford) shows how many "
        "people actually have had a partner by each age. This notebook asks how large the number of possible "
        "partners has to be for the two to match.\n\n"
@@ -354,7 +354,7 @@ cells = [
          "ax.plot(labels, predicted.values, \"k-\", label=\"free model\")\n"
          "ax.set(xlabel=\"age band\", ylabel=\"share who ever had a partner\", title=\"Free model against HCMST\")\n"
          "ax.legend();"),
-    md("## The soul mate model\n\n"
+    md("## The soulmate model\n\n"
        "Now the premise itself: one possible partner in the world pool M, recognized with chance p_recog. Then "
        "q = p_recog / M. p_recog keeps the guess from notebook 02, 90% sure between 0.1 and 0.6."),
     code("wpp = pd.read_csv(\"../data/wpp_pool.csv\")\n"
@@ -362,14 +362,14 @@ cells = [
          "with build_soulmate_model(hcmst, curve, M):\n"
          "    soulmate = pm.sample(random_seed=2, idata_kwargs={\"log_likelihood\": True})\n"
          "share = (1 - (1 - soulmate.posterior[\"q\"].values.ravel()[:, None]) ** curve[hcmst[\"age\"].to_numpy()][None, :]).mean()\n"
-         "print(f\"soul mate model: predicted share who ever had a partner {share:.1e}, observed {hcmst['ever_partnered'].mean():.3f}\")\n"
+         "print(f\"soulmate model: predicted share who ever had a partner {share:.1e}, observed {hcmst['ever_partnered'].mean():.3f}\")\n"
          "print(f\"divergences {int(soulmate.sample_stats['diverging'].sum())}\")"),
     md("## Which model predicts better?\n\n"
        "LOO (leave one out cross validation) scores how well each model predicts each person it did not see. "
        "elpd is that score summed over people, and higher is better."),
-    code("comparison = az.compare({\"free q\": free, \"one soul mate\": soulmate})\n"
+    code("comparison = az.compare({\"free q\": free, \"one soulmate\": soulmate})\n"
          "comparison"),
-    md("## How many soul mates?\n\n"
+    md("## How many soulmates?\n\n"
        "K = q × M / p_recog is the number of people in the world pool who would have worked for you. q comes from "
        "the free model, and p_recog from its prior, because no data informs it."),
     code("a, b = recog_prior()\n"
@@ -402,13 +402,13 @@ Expected: exits without error after about 2 minutes. In the scratch trial it pri
 ```
 {18: 1420, 25: 5044, 40: 12794, 60: 21722}
 q: 1 in 2,419, 94% interval 1 in 2,230 to 1 in 2,609, divergences 0
-soul mate model: predicted share who ever had a partner 9.7e-06, observed 0.961
+soulmate model: predicted share who ever had a partner 9.7e-06, observed 0.961
 divergences 0
 1 in 2,419 new people you talk to could be a partner
 K: 1,589,085 possible partners in the world pool, 94% interval 817,943 to 5,532,943
 ```
 
-The LOO table ranks "free q" first, with an elpd of about −350. "One soul mate" comes second, with an elpd difference of about −27,900 and a standard error of about 140.
+The LOO table ranks "free q" first, with an elpd of about −350. "One soulmate" comes second, with an elpd difference of about −27,900 and a standard error of about 140.
 
 - [ ] **Step 3: Run the full test suite**
 

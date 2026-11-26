@@ -1,4 +1,4 @@
-# Soul mates milestone 3 implementation plan
+# Soulmates milestone 3 implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -44,7 +44,7 @@ This script talks to the network, so it has no unit test. Step 2 checks it by ha
 `scripts/download_wpp.py`:
 
 ```python
-"""Download the WPP 2024 single age file, check its MD5 and keep the rows for the soul mate pool."""
+"""Download the WPP 2024 single age file, check its MD5 and keep the rows for the soulmate pool."""
 import hashlib
 import pathlib
 import urllib.request
@@ -214,8 +214,8 @@ def replace(prefix, cell):
     nb.cells[hits[0]] = cell
 
 
-replace("## The chance of finding your soul mate", nbf.v4.new_markdown_cell(
-    "## The chance of finding your soul mate\n\n"
+replace("## The chance of finding your soulmate", nbf.v4.new_markdown_cell(
+    "## The chance of finding your soulmate\n\n"
     "P_find = 1 − (1 − p_recog / M) ^ eye_contacts. M is everyone alive in 2023 aged 25 to 35, from the UN "
     "World Population Prospects 2024 (licence CC BY 3.0 IGO). Run `uv run python scripts/download_wpp.py` "
     "once before this section. p_eye and p_recog are still guesses with Beta(2, 2) priors, and they drive "
@@ -231,7 +231,7 @@ replace("POOL_SIZE = 1e8", nbf.v4.new_code_cell(
     "    print(f\"{label}: M = {m:,.0f}, P_find mean {pf.mean():.2e} (1 in {1 / pf.mean():,.0f}), \"\n"
     "          f\"94% interval {np.percentile(pf, 3):.2e} to {np.percentile(pf, 97):.2e}\")\n"
     "    ax.hist(np.log10(pf), bins=60, alpha=0.5, label=label)\n"
-    "ax.set(xlabel=\"log10 of P(find your soul mate)\", ylabel=\"posterior draws\", "
+    "ax.set(xlabel=\"log10 of P(find your soulmate)\", ylabel=\"posterior draws\", "
     "title=\"P_find for two pools, age 30 in 2023\")\n"
     "ax.legend();"))
 replace("## Known limits", nbf.v4.new_markdown_cell(

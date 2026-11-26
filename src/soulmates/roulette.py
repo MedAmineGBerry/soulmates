@@ -1,4 +1,4 @@
-"""Soul Mate Roulette: play out simulated lives under soul mate rules and under real world rules."""
+"""Soulmate Roulette: play out simulated lives under soulmate rules and under real world rules."""
 import json
 
 import numpy as np

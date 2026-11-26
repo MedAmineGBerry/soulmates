@@ -1,4 +1,4 @@
-# Soul mates milestone 4 implementation plan
+# Soulmates milestone 4 implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -112,7 +112,7 @@ Expected: `test_p_find_by_hand` FAILED with a `KeyError` on `eye_contacts`, and 
 `src/soulmates/model.py`, full file:
 
 ```python
-"""PyMC model for new contacts per day, and the chance of finding your soul mate."""
+"""PyMC model for new contacts per day, and the chance of finding your soulmate."""
 import numpy as np
 import preliz as pz
 import pymc as pm
@@ -314,12 +314,12 @@ def find(nb, prefix):
 # Notebook 01: new wording of the premise
 path = "notebooks/01_simulated.ipynb"
 nb = nbf.read(path, as_version=4)
-nb.cells[find(nb, "# Soul mates with Bayes, on simulated data")] = md(
-    "# Soul mates with Bayes, on simulated data\n\n"
-    "Everyone has one soul mate, drawn at random from the M people born within 5 years of them. "
+nb.cells[find(nb, "# Soulmates with Bayes, on simulated data")] = md(
+    "# Soulmates with Bayes, on simulated data\n\n"
+    "Everyone has one soulmate, drawn at random from the M people born within 5 years of them. "
     "You find them only if you meet and talk to them and you both recognize each other. This notebook "
     "estimates how many new people you meet per day, turns that into new people met in a lifetime, and "
-    "then into the chance of finding your soul mate. The data is simulated with known true values, so we "
+    "then into the chance of finding your soulmate. The data is simulated with known true values, so we "
     "can check the model.")
 nbf.write(nb, path)
 print("updated", path)
@@ -327,8 +327,8 @@ print("updated", path)
 # Notebook 02
 path = "notebooks/02_polymod.ipynb"
 nb = nbf.read(path, as_version=4)
-nb.cells[find(nb, "# Soul mates with Bayes, on the POLYMOD survey")] = md(
-    "# Soul mates with Bayes, on the POLYMOD survey\n\n"
+nb.cells[find(nb, "# Soulmates with Bayes, on the POLYMOD survey")] = md(
+    "# Soulmates with Bayes, on the POLYMOD survey\n\n"
     "POLYMOD asked 7290 people in 8 European countries in 2005 and 2006 to write down everyone they met "
     "on one day (Mossong et al. 2008, Zenodo record 3874557, licence CC BY-NC 4.0). A contact counts when "
     "two people touch skin to skin, or talk face to face for at least three words. For each contact, "
@@ -344,10 +344,10 @@ nb.cells[find(nb, "model = build_model(df)")] = code(
     "with model:\n"
     "    idata = pm.sample(random_seed=2)\n"
     "az.summary(idata, var_names=[\"mu_pop\", \"sigma_band\", \"alpha\", \"beta_weekend\", \"lifetime_new\", \"p_recog\"])")
-i = find(nb, "## The chance of finding your soul mate")
+i = find(nb, "## The chance of finding your soulmate")
 nb.cells[i:i] = [
     md("## The guess behind p_recog\n\n"
-       "p_recog is the chance that, when you meet your soul mate and talk for the first time, you both "
+       "p_recog is the chance that, when you meet your soulmate and talk for the first time, you both "
        "realize it then. No data informs it. The guess \"I am 90% sure it lies between 0.1 and 0.6\" "
        "becomes a Beta prior through PreliZ `maxent`, which picks the flattest Beta curve that puts 90% "
        "between the two bounds. Mossong et al. report that about three quarters of first time contacts "
@@ -363,8 +363,8 @@ nb.cells[i:i] = [
          "title=f\"Prior for p_recog, {inside:.0%} of draws between the bounds\")\n"
          "print(f\"p_recog mean {p_recog.mean():.3f}, share between the bounds {inside:.3f}\")"),
 ]
-nb.cells[find(nb, "## The chance of finding your soul mate")] = md(
-    "## The chance of finding your soul mate\n\n"
+nb.cells[find(nb, "## The chance of finding your soulmate")] = md(
+    "## The chance of finding your soulmate\n\n"
     "P_find = 1 − (1 − p_recog / M) ^ lifetime_new. M is everyone alive in 2023 aged 25 to 35, from the UN "
     "World Population Prospects 2024 (licence CC BY 3.0 IGO). p_recog is the only guessed number left, and "
     "it drives the spread of the result.")

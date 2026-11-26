@@ -1,4 +1,4 @@
-# Soul mates milestone 2 implementation plan
+# Soulmates milestone 2 implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -339,7 +339,7 @@ import nbformat as nbf
 
 md, code = nbf.v4.new_markdown_cell, nbf.v4.new_code_cell
 cells = [
-    md("# Soul mates with Bayes, on the POLYMOD survey\n\n"
+    md("# Soulmates with Bayes, on the POLYMOD survey\n\n"
        "POLYMOD asked 7290 people in 8 European countries in 2005 and 2006 to write down everyone they met "
        "on one day (Mossong et al. 2008, Zenodo record 3874557, licence CC BY-NC 4.0). For each contact they "
        "said how often they usually meet that person. A contact marked \"first time\" is a new person. "
@@ -388,7 +388,7 @@ cells = [
          "to {np.percentile(multiplier, 97):.2f}\")\n"
          "print(f\"lifetime new contacts {lifetime.mean():.0f}, 94% interval {np.percentile(lifetime, 3):.0f} "
          "to {np.percentile(lifetime, 97):.0f}\")"),
-    md("## The chance of finding your soul mate\n\n"
+    md("## The chance of finding your soulmate\n\n"
        "P_find = 1 − (1 − p_recog / M) ^ eye_contacts. M is still a placeholder until the UN World "
        "Population Prospects cohort sizes are in, and p_eye and p_recog are still guesses."),
     code("POOL_SIZE = 1e8  # PLACEHOLDER until the UN WPP cohort sizes arrive\n"

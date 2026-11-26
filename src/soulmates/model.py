@@ -1,4 +1,4 @@
-"""PyMC model for new contacts per day by age band and country, and the chance of finding your soul mate."""
+"""PyMC model for new contacts per day by age band and country, and the chance of finding your soulmate."""
 import numpy as np
 import preliz as pz
 import pymc as pm

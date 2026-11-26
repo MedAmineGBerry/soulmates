@@ -1,4 +1,4 @@
-# Soul mates with Bayes, milestone 3
+# Soulmates with Bayes, milestone 3
 
 This milestone replaces the placeholder pool of 1e8 people with real cohort sizes from the UN World Population Prospects. It adds a download script, a function for the pool size M, and the real P_find in the POLYMOD notebook. The earlier specs are `2026-11-05-soulmates-design.md` and `2026-11-05-soulmates-milestone-2-design.md`. This spec only describes what changes.
 

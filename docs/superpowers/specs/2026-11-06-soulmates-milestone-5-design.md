@@ -1,6 +1,6 @@
-# Soul mates with Bayes, milestone 5
+# Soulmates with Bayes, milestone 5
 
-This milestone tests the soul mate premise against real partnership data. It asks how many possible partners a person would need for the model to match how many people actually find one. The data is the 2017 wave of How Couples Meet and Stay Together (HCMST). The earlier specs are in this folder. This spec only describes what is new.
+This milestone tests the soulmate premise against real partnership data. It asks how many possible partners a person would need for the model to match how many people actually find one. The data is the 2017 wave of How Couples Meet and Stay Together (HCMST). The earlier specs are in this folder. This spec only describes what is new.
 
 ## The idea
 
@@ -10,7 +10,7 @@ Each new person you talk to is a possible partner with a small chance q. By age 
 P_partner(a) = 1 − (1 − q) ^ N(a)
 ```
 
-The soul mate model is the special case with exactly one possible partner in a pool of M people, whom you recognize with chance p_recog. It fixes q = p_recog / M, about 1 in 3.7 billion for the world pool. The free model lets the HCMST data choose q.
+The soulmate model is the special case with exactly one possible partner in a pool of M people, whom you recognize with chance p_recog. It fixes q = p_recog / M, about 1 in 3.7 billion for the world pool. The free model lets the HCMST data choose q.
 
 The number of possible partners in the world pool is
 
@@ -18,7 +18,7 @@ The number of possible partners in the world pool is
 K = q × M / p_recog
 ```
 
-The soul mate premise says K = 1. The talk shows how large K has to be.
+The soulmate premise says K = 1. The talk shows how large K has to be.
 
 Take a small example. With q = 1 in 2,000 and N = 7,000 new people by the mid twenties, P_partner = 1 − (1 − 1/2000)^7000. That is about 0.97.
 
@@ -82,7 +82,7 @@ log10_q ~ Normal(−4, 2)                                  # wide: 1 in 100 mill
 ever_partnered[i] ~ Bernoulli(1 − (1 − 10^log10_q) ^ N(age[i]))
 ```
 
-The soul mate model:
+The soulmate model:
 
 ```
 p_recog ~ Beta from PreliZ maxent, the same guess as milestone 4
@@ -103,8 +103,8 @@ A trial on 2026-11-06, with `start_age=15`:
 A second trial ran the whole notebook in a scratch copy on 2026-11-06:
 
 1. q is 1 in 2,419, with a 94% interval from 1 in 2,230 to 1 in 2,609.
-2. The soul mate model predicts that a share of 9.7e-06 of people ever had a partner. HCMST observes 0.961.
-3. LOO ranks the free model first, with an elpd of about −350. The soul mate model is about 27,900 lower, with a standard error of about 140.
+2. The soulmate model predicts that a share of 9.7e-06 of people ever had a partner. HCMST observes 0.961.
+3. LOO ranks the free model first, with an elpd of about −350. The soulmate model is about 27,900 lower, with a standard error of about 140.
 4. K, from the draws, has a median of 1,589,085 and a 94% interval from 817,943 to 5,532,943.
 5. Both models had 0 divergences.
 6. The free model predicts about 69% partnered at 18 to 24, where HCMST shows 81%. From 25 on it matches the observed shares within about 2 points.
@@ -123,7 +123,7 @@ notebooks/03_partners.ipynb # the comparison
 
 `lifetime_curve(posterior, start_age=15)` returns a numpy array with N(a) for ages 0 to 100. Ages below `start_age` get 0.
 
-`build_match_model(df, curve)` returns the free model. `build_soulmate_model(df, curve, pool_size, recog_bounds=(0.1, 0.6), recog_mass=0.9)` returns the soul mate model.
+`build_match_model(df, curve)` returns the free model. `build_soulmate_model(df, curve, pool_size, recog_bounds=(0.1, 0.6), recog_mass=0.9)` returns the soulmate model.
 
 ## Tests
 
@@ -139,7 +139,7 @@ notebooks/03_partners.ipynb # the comparison
 2. The observed shares by age band, weighted and unweighted.
 3. The POLYMOD fit and the lifetime curve.
 4. The free model: q, and the predicted share by age band next to the observed share.
-5. The soul mate model and the LOO comparison of the two.
+5. The soulmate model and the LOO comparison of the two.
 6. The headline: K with its interval, and "1 in X people you talk to could be a partner".
 7. Known limits:
    1. The contact rates come from Europe in 2006 and the partner data from the US in 2017.
@@ -153,4 +153,4 @@ notebooks/03_partners.ipynb # the comparison
 1. A q that changes with age.
 2. The later HCMST waves of 2020 and 2022.
 3. Survey weights inside the model.
-4. The Soul Mate Roulette demo, which is the next milestone.
+4. The Soulmate Roulette demo, which is the next milestone.

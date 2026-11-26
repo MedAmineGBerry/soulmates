@@ -27,7 +27,7 @@ def load_polymod(raw_dir, window=5, max_drop=0.05):
             raise ValueError(f"{rule} removes {mask.mean():.1%} of rows, more than max_drop = {max_drop:.1%}")
     part = part[~(no_age | no_day)]
     # New means "first time" (code 5) and within `window` years of the participant's age, because the
-    # soul mate pool only holds people of that age. A missing frequency or age compares as False.
+    # soulmate pool only holds people of that age. A missing frequency or age compares as False.
     in_window = (contact_age(cont) - cont["part_age"]).abs() <= window
     new = cont[(cont["frequency_multi"] == 5) & in_window].groupby("part_id").size()
     return pd.DataFrame({

@@ -1,18 +1,18 @@
-# Soul mates with Bayes, milestone 1
+# Soulmates with Bayes, milestone 1
 
-This milestone builds the whole pipeline on simulated data. It simulates contact diaries, fits a PyMC model for new contacts per day, and turns the fit into the probability of finding your soul mate. A test shows that the model recovers known true values. It is the base for a PyCon talk inspired by the "Soul Mates" chapter of Randall Munroe's What If?.
+This milestone builds the whole pipeline on simulated data. It simulates contact diaries, fits a PyMC model for new contacts per day, and turns the fit into the probability of finding your soulmate. A test shows that the model recovers known true values. It is the base for a PyCon talk inspired by the "Soul Mates" chapter of Randall Munroe's What If?.
 
 ## The question
 
-Everyone has exactly one soul mate, drawn at random from the people born around the same time. You find them only if you lock eyes and recognize each other. What is the chance that this happens in a lifetime?
+Everyone has exactly one soulmate, drawn at random from the people born around the same time. You find them only if you lock eyes and recognize each other. What is the chance that this happens in a lifetime?
 
-Two numbers answer it. M is the pool size: everyone born within 5 years of you, before or after. N is the number of new people you make eye contact with between ages 18 and 60. If each of those people is your soul mate with probability 1/M, the chance of finding them is
+Two numbers answer it. M is the pool size: everyone born within 5 years of you, before or after. N is the number of new people you make eye contact with between ages 18 and 60. If each of those people is your soulmate with probability 1/M, the chance of finding them is
 
 ```
 P_find = 1 − (1 − p_recog / M) ^ N
 ```
 
-where p_recog is the probability that you recognize your soul mate when you lock eyes. When N is tiny next to M this is close to N × p_recog / M.
+where p_recog is the probability that you recognize your soulmate when you lock eyes. When N is tiny next to M this is close to N × p_recog / M.
 
 ## Scope
 
@@ -29,7 +29,7 @@ Later milestones, each with its own spec:
 1. Real POLYMOD diaries from Zenodo, with weekday and weekend effects and input validation.
 2. M from UN World Population Prospects, with uncertainty on M.
 3. Model comparison against real partnership data from How Couples Meet and Stay Together.
-4. The Soul Mate Roulette interactive demo.
+4. The Soulmate Roulette interactive demo.
 
 The "people never change" growth model is a separate repo and is not part of this project.
 

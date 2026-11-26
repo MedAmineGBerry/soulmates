@@ -1,8 +1,8 @@
-# Soul mates milestone 1 implementation plan
+# Soulmates milestone 1 implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the simulated data pipeline for the soul mate talk: diaries, the PyMC model, P_find, the tests and the walkthrough notebook.
+**Goal:** Build the simulated data pipeline for the soulmate talk: diaries, the PyMC model, P_find, the tests and the walkthrough notebook.
 
 **Architecture:** `simulate.py` makes POLYMOD style diaries with known true values. `model.py` holds the band definition, the PyMC model and the numpy function for P_find. The tests and the notebook only call these three public functions.
 
@@ -60,7 +60,7 @@ __pycache__/
 [project]
 name = "soulmates"
 version = "0.1.0"
-description = "Bayesian odds of finding your soul mate, for a PyCon talk"
+description = "Bayesian odds of finding your soulmate, for a PyCon talk"
 requires-python = ">=3.13"
 dependencies = [
     "arviz>=1.3",
@@ -113,7 +113,7 @@ Expected: FAIL with `ModuleNotFoundError: No module named 'soulmates.model'`
 `src/soulmates/model.py`:
 
 ```python
-"""PyMC model for new contacts per day, and the chance of finding your soul mate."""
+"""PyMC model for new contacts per day, and the chance of finding your soulmate."""
 import numpy as np
 
 
@@ -193,7 +193,7 @@ Expected: collection error with `ImportError: cannot import name 'build_model' f
 `src/soulmates/model.py`, full file:
 
 ```python
-"""PyMC model for new contacts per day, and the chance of finding your soul mate."""
+"""PyMC model for new contacts per day, and the chance of finding your soulmate."""
 import numpy as np
 import pymc as pm
 import pytensor.tensor as pt
@@ -280,11 +280,11 @@ import nbformat as nbf
 
 md, code = nbf.v4.new_markdown_cell, nbf.v4.new_code_cell
 cells = [
-    md("# Soul mates with Bayes, on simulated data\n\n"
-       "Everyone has one soul mate, drawn at random from the M people born within 5 years of them. "
+    md("# Soulmates with Bayes, on simulated data\n\n"
+       "Everyone has one soulmate, drawn at random from the M people born within 5 years of them. "
        "You find them only if you lock eyes and recognize each other. This notebook estimates how many "
        "new people you meet per day, turns that into lifetime eye contacts, and then into the chance of "
-       "finding your soul mate. The data is simulated with known true values, so we can check the model."),
+       "finding your soulmate. The data is simulated with known true values, so we can check the model."),
     code("import arviz as az\n"
          "import matplotlib.pyplot as plt\n"
          "import numpy as np\n"
@@ -331,14 +331,14 @@ cells = [
          "ax.set(xlabel=\"start of the 5 year age band\", ylabel=\"new contacts per day\", "
          "title=\"Posterior band means against the true values\")\n"
          "ax.legend();"),
-    md("## The chance of finding your soul mate\n\n"
+    md("## The chance of finding your soulmate\n\n"
        "P_find = 1 − (1 − p_recog / M) ^ eye_contacts. M is a placeholder here until the UN World "
        "Population Prospects cohort sizes are in."),
     code("POOL_SIZE = 1e8  # PLACEHOLDER until the UN WPP cohort sizes arrive\n"
          "pf = p_find(idata, POOL_SIZE).values.ravel()\n"
          "fig, ax = plt.subplots()\n"
          "ax.hist(pf, bins=60)\n"
-         "ax.set(xlabel=\"P(find your soul mate)\", ylabel=\"posterior draws\", "
+         "ax.set(xlabel=\"P(find your soulmate)\", ylabel=\"posterior draws\", "
          "title=f\"P_find with a placeholder pool of {POOL_SIZE:.0e} people\")\n"
          "print(f\"P_find mean {pf.mean():.2e}, 94% interval {np.percentile(pf, 3):.2e} to {np.percentile(pf, 97):.2e}\")"),
 ]

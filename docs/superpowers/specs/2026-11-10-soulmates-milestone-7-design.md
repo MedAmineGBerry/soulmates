@@ -1,13 +1,13 @@
-# Soul mates with Bayes, milestone 7: fixing the calculus
+# Soulmates with Bayes, milestone 7: fixing the calculus
 
 This milestone corrects one error in the model and several weak spots around it. It also gives every country its own contact level. It changes both headline numbers of the talk. The earlier specs are in this folder. Their numbers are superseded by the ones here.
 
 ## What was wrong
 
-1. N and M counted different people. N, the number of new people you talk to, counted every age. M, the pool your soul mate comes from, counts only people within 5 years of your age. Only 24.9% of the first time contacts of adults in POLYMOD fall inside that window. The France 2012 survey gives 25.2%.
+1. N and M counted different people. N, the number of new people you talk to, counted every age. M, the pool your soulmate comes from, counts only people within 5 years of your age. Only 24.9% of the first time contacts of adults in POLYMOD fall inside that window. The France 2012 survey gives 25.2%.
 2. The odds counted new people from age 18 and the partner model counted from 15. In HCMST, 17.8% of people met their partner before 18.
 3. The partner model had one match chance q for every age and gave everyone the same number of contacts. It missed ages 18 to 24 by 12 points. It also predicted 100% partnered at 50 to 60, where 3 of 828 people never had a partner.
-4. The comparison of the one soul mate model with the free model was no contest. One side predicted that 1 in 100,000 people ever has a partner, and the data shows 96%.
+4. The comparison of the one soulmate model with the free model was no contest. One side predicted that 1 in 100,000 people ever has a partner, and the data shows 96%.
 5. The figure of 1.6 million possible partners in the world divided by a guess. It also assumed that the people you meet are a random draw from the whole world.
 6. p_recog was defined for the first conversation only.
 7. All countries shared one contact level, although they differ by a factor of up to five.
@@ -23,7 +23,7 @@ This milestone corrects one error in the model and several weak spots around it.
 | Best case | The most talkative country, shown next to the headline and labelled as the best case. |
 | p_recog | The chance that you both realize it at some point after you have met and talked. The guess: "I am 90% sure it lies between 0.3 and 0.9." |
 | Partner model | A match chance q and a number k for how much people differ in how many others they meet. |
-| Comparison | The model with q and k against the model with one q. The one soul mate model is removed. |
+| Comparison | The model with q and k against the model with one q. The one soulmate model is removed. |
 | Twist | "About 14 of the people your age you will talk to." The world figure of 1.6 million is removed. |
 
 The guess is higher because p_recog no longer has to happen in the first conversation. In HCMST, 62% of couples began their romance in the same year they met, and 80% within one year.
@@ -153,9 +153,9 @@ The talk shows a best case next to the headline and labels it as one:
 2. Italy, if recognition were certain: 1 in 138,200.
 3. Online meeting can only add to this. In HCMST, 37% of the couples who met in 2010 or later met online. The diaries of 2005 to 2012 cannot see such meetings, and we have no number for them.
 
-The headline also has a warmer reading. At 1 in 325,800, about 4,100 of the 1.33 billion people of your generation do find their one soul mate.
+The headline also has a warmer reading. At 1 in 325,800, about 4,100 of the 1.33 billion people of your generation do find their one soulmate.
 
-With exactly one soul mate, no choice in this spec brings the odds above about 1 in 138,000.
+With exactly one soulmate, no choice in this spec brings the odds above about 1 in 138,000.
 
 ## Partner model results
 
@@ -174,7 +174,7 @@ The average person talks to about 14 possible partners of their own age by 60, w
 
 ## Demo
 
-`spin` draws q and k together from the posterior. For each life it draws λ from a Gamma distribution with shape k and mean 1. The life then meets λ × N(age) people, times the factor of the chosen country. The real world rule finds a partner with chance 1 − (1 − q) ^ (λ × N(age)). The age at which the partner was met comes from the curve scaled by λ. The soul mate rule uses the same number of people.
+`spin` draws q and k together from the posterior. For each life it draws λ from a Gamma distribution with shape k and mean 1. The life then meets λ × N(age) people, times the factor of the chosen country. The real world rule finds a partner with chance 1 − (1 − q) ^ (λ × N(age)). The age at which the partner was met comes from the curve scaled by λ. The soulmate rule uses the same number of people.
 
 The app gains a choice "where you live": a typical country, or one of the 9 countries. `data/demo_inputs.json` gains the k draws and the mean factor of each country. Its curve is the one of the typical country, from age 15. The app text drops the world figure of 1.6 million and shows how many possible partners the 1,000 lives met on average.
 

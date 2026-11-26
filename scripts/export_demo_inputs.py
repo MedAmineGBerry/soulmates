@@ -1,4 +1,4 @@
-"""Write data/demo_inputs.json for Soul Mate Roulette: the lifetime curve, the country factors, the q and k
+"""Write data/demo_inputs.json for Soulmate Roulette: the lifetime curve, the country factors, the q and k
 draws and the pool sizes.
 
 It fits the contact model and the partner model with the same seeds as the notebooks, so it needs the
